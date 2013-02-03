@@ -4,12 +4,13 @@
  */
 package hmwrk;
 
-import java.sql.Array;
-import java.sql.Statement;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -53,16 +54,29 @@ public class NewJFrame extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jTable1 = new javax.swing.JTable(){
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                if(columnIndex == 0) return false;
+                return true;
+            }
+        }
+        ;
         jProgressBar1 = new javax.swing.JProgressBar();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        jTable2 = new javax.swing.JTable(){
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                if(columnIndex == 0) return false;
+                return true;
+            }
+        }
+        ;
         jButton1 = new javax.swing.JButton();
         jTextField1 = new hmwrk.Placeholder("Username");
         jPasswordField1 = new PasswordPlaceholder("Password");
         jPasswordField2 = new PasswordPlaceholder("Repeat Password");
         jButton2 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -94,126 +108,123 @@ public class NewJFrame extends javax.swing.JFrame {
             new String [] {
                 "ID", "Full Name", "Address", "Company"
             }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, true, true, true
-            };
+        )
+    );
+    jTable2.setAutoscrolls(false);
+    jTable2.setEditingColumn(1);
+    jTable2.setEditingRow(1);
+    jTable2.getTableHeader().setReorderingAllowed(false);
+    jScrollPane2.setViewportView(jTable2);
 
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jTable2.setAutoscrolls(false);
-        jTable2.setEditingColumn(1);
-        jTable2.setEditingRow(1);
-        jTable2.getTableHeader().setReorderingAllowed(false);
-        jScrollPane2.setViewportView(jTable2);
-        jTable2.getColumnModel().getColumn(0).setResizable(false);
-        jTable2.getColumnModel().getColumn(0).setHeaderValue("ID");
-        jTable2.getColumnModel().getColumn(1).setResizable(false);
-        jTable2.getColumnModel().getColumn(1).setHeaderValue("Full Name");
-        jTable2.getColumnModel().getColumn(2).setResizable(false);
-        jTable2.getColumnModel().getColumn(2).setHeaderValue("Address");
-        jTable2.getColumnModel().getColumn(3).setResizable(false);
-        jTable2.getColumnModel().getColumn(3).setHeaderValue("Company");
+    jButton1.setText("Register");
+    jButton1.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            jButton1ActionPerformed(evt);
+        }
+    });
 
-        jButton1.setText("Register");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
+    jPasswordField1.addKeyListener(new java.awt.event.KeyAdapter() {
+        public void keyReleased(java.awt.event.KeyEvent evt) {
+            updateStrength(evt);
+        }
+    });
 
-        jPasswordField1.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                updateStrength(evt);
-            }
-        });
+    jButton2.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+    jButton2.setText("Save Selected User to File");
+    jButton2.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            jButton2ActionPerformed(evt);
+        }
+    });
 
-        jButton2.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        jButton2.setText("Save Selected User to File");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
+    jLabel1.setText("Transactions");
 
-        jLabel1.setText("Transactions");
+    jLabel2.setText("Users");
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 555, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTextField1)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                        .addGap(0, 0, Short.MAX_VALUE)
-                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(jPasswordField1, javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addComponent(jPasswordField2, javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)
-                                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)))
-                .addGap(16, 16, 16))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(19, 19, 19)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+    javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+    jPanel1.setLayout(jPanel1Layout);
+    jPanel1Layout.setHorizontalGroup(
+        jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 555, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                            .addContainerGap()
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jTextField1)
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                    .addGap(0, 0, Short.MAX_VALUE)
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jPasswordField1, javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(jPasswordField2, javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)
+                                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGap(0, 0, Short.MAX_VALUE)
+                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGap(18, 18, 18)
+                            .addComponent(jLabel2)
+                            .addGap(0, 0, Short.MAX_VALUE)))))
+            .addGap(16, 16, 16))
+        .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGap(19, 19, 19)
+            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+    );
+    jPanel1Layout.setVerticalGroup(
+        jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPasswordField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(13, 13, 13)
-                        .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
+                        .addComponent(jLabel2))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jPasswordField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(13, 13, 13)
+                    .addComponent(jButton1)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                    .addContainerGap(31, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+            .addComponent(jLabel1)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addContainerGap())
+    );
 
-        jProgressBar1.getAccessibleContext().setAccessibleName("");
+    jProgressBar1.getAccessibleContext().setAccessibleName("");
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
+    javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+    getContentPane().setLayout(layout);
+    layout.setHorizontalGroup(
+        layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+    );
+    layout.setVerticalGroup(
+        layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGroup(layout.createSequentialGroup()
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(0, 0, Short.MAX_VALUE))
+    );
 
-        pack();
+    pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -227,7 +238,7 @@ public class NewJFrame extends javax.swing.JFrame {
     private void updateStrength(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_updateStrength
         boolean letterCheck = false;
         boolean numberCheck = false;
-        boolean specialCharCheck = false;
+       // boolean specialCharCheck = false;
         
         char[] password = jPasswordField1.getPassword();
         for(int i = 0; i < password.length; i++)
@@ -250,8 +261,34 @@ public class NewJFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_updateStrength
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        TableModel model = (DefaultTableModel)jTable1.getModel();
         int row = jTable1.getSelectedRow();
-        System.out.println("The row selected for deletetion row");
+        if(row != -1)
+        {
+            Object fileName = model.getValueAt(row, 0); // get the ID of the selected row
+            try {
+                //create the file
+                FileWriter fstream = new FileWriter(fileName + ".txt"); // save the file, name would be the user id
+                fstream.write("Username: " + jTable1.getValueAt(row, 1) + "\r\n\r\n");
+                fstream.write("Transactions: \r\n");
+                for(int i = 0; i < jTable2.getRowCount()-1; i++) // its -1 because there is always one empty row at the end of the table
+                {
+                    fstream.write("->");
+                    for(int j = 0; j < jTable2.getColumnCount(); j++)
+                    {
+                        fstream.write(jTable2.getValueAt(i, j) + " ");
+                    }
+                    fstream.write("\r\n");
+                }
+                fstream.close();
+            } catch (IOException ex) {
+                Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        else
+        {
+            alert("Select User before atempting to save his transactions");
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
@@ -292,6 +329,7 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPasswordField jPasswordField1;
     private javax.swing.JPasswordField jPasswordField2;
@@ -338,12 +376,12 @@ public class NewJFrame extends javax.swing.JFrame {
     }
 
     private boolean comparePasswords(char[] password, char[] repeatPassword) {
-        System.out.println("cheking password length");
+        //System.out.println("cheking password length");
         if(password.length == repeatPassword.length)
         {
-            System.out.println("length OK");
+        //    System.out.println("length OK");
             boolean complexCheck = true;
-            System.out.println("running complex check");
+        //    System.out.println("running complex check");
             for(int i = 0; i < password.length; i++)
             {
                 complexCheck = complexCheck && (password[i] == repeatPassword[i]);
@@ -420,8 +458,9 @@ public class NewJFrame extends javax.swing.JFrame {
             @Override
             public void tableChanged(TableModelEvent e) {
                 System.out.println("Changes in table detected");
-                int row = e.getFirstRow();
-                int col = e.getColumn();
+                int row = jTable1.getSelectedRow();
+                int col = jTable1.getSelectedColumn();
+
                 String colName = jTable1.getColumnName(col);
                     
                 try {
@@ -474,15 +513,18 @@ public class NewJFrame extends javax.swing.JFrame {
                         @Override
                         public void tableChanged(TableModelEvent e) {
                             try {
-                                if(e.getLastRow() == jTable2.getRowCount()-1 && e.getType() == e.UPDATE)
-                                {   
-                                    //insert row
-                                    int col = jTable2.getSelectedColumn();
-                                    String colName = jTable2.getColumnName(col);
-                                    int selectedCol = e.getColumn();
-                                    int selectedRow = e.getFirstRow();
+                                int selectedRow = jTable2.getSelectedRow();
+                                int selectedCol = jTable2.getSelectedColumn();
+                                Object selectedId = jTable2.getValueAt(selectedRow, 0);
+                                Boolean insertFlag = selectedId.equals("");
+                                //when in need of debugging , uncomment below
+                                //System.out.println("Flag = " + insertFlag);
+                                //System.out.println("SelectedRow = " + selectedRow + " , jTable2.getRowCount() = " + (jTable2.getRowCount()-1));
+                                //System.out.println("e.getType() = " + e.getType() + " , e.UPDATE =  " + e.UPDATE);
+                                if(selectedRow == jTable2.getRowCount()-1 && e.getType() == e.UPDATE && insertFlag)
+                                {   //insert row
+                                    String colName = jTable2.getColumnName(selectedCol);
                                     Object id = jTable1.getValueAt(jTable1.getSelectedRow(), 0);
-                                    System.out.println("User_id "+id);
                                     Object val = jTable2.getValueAt(selectedRow, selectedCol);
                                     
                                     Connection con = initDbCon();
@@ -490,23 +532,20 @@ public class NewJFrame extends javax.swing.JFrame {
                                                                 "VALUES ('" + val + "','" + id + "');";
                                     Statement st = (Statement) con.createStatement();
                                     st.executeUpdate(query);
+                                    //GO BACK HERE
                                     DefaultTableModel dtm = (DefaultTableModel)jTable2.getModel();
                                     dtm.addRow(new Object[]{""});
+                                    updateProperties(id);
                                 }
-                                else
-                                {//edit
-                                    int col = jTable2.getSelectedColumn();
-                                    String colName = jTable2.getColumnName(col);
-                                    int selectedCol = e.getColumn();
-                                    int selectedRow = e.getFirstRow();
+                                if(e.getType() == e.UPDATE && !insertFlag)
+                                {   //edit
+                                    String colName = jTable2.getColumnName(selectedCol);
                                     Object id = jTable1.getValueAt(jTable1.getSelectedRow(), 0);
-                                    System.out.println("User_id "+id);
                                     Object val = jTable2.getValueAt(selectedRow, selectedCol);
                                     Object t2id = jTable2.getValueAt(selectedRow, 0);
                                     Connection con = initDbCon();
                                     String query = "UPDATE `properties` SET `" + colName + "` = '"+ val + "',`user_id`= '" + id + "' "
                                             + "WHERE id = " + t2id;
-                                    System.out.println(query);
                                     Statement st = (Statement) con.createStatement();
                                     st.executeUpdate(query);
                                 }
